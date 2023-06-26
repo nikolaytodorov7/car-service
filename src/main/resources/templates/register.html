@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8">
+  <title>User Registration</title>
+  <style>
+        .container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+        }
+
+        .form-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .form-container input {
+            margin-bottom: 10px;
+        }
+
+        .form-container button {
+            margin-top: 10px;
+        }
+    </style>
+  <script th:inline="javascript">
+        function register() {
+            var name = document.getElementById("name").value;
+            var username = document.getElementById("username").value;
+            var password = document.getElementById("password").value;
+            var type = document.getElementById("type").value;
+
+            var user = {
+                name: name,
+                username: username,
+                password: password,
+                type: type
+            };
+
+            fetch("/register", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify(user)
+            })
+            .then(response => response.json())
+            .then(data => {
+                console.log("Response:", data);
+            })
+            .catch(error => {
+                console.error("Error:", error);
+            });
+        }
+    </script>
+</head>
+<body>
+<div class="container">
+  <div class="form-container">
+    <input type="text" id="name" placeholder="Name">
+    <input type="text" id="username" placeholder="Username">
+    <input type="password" id="password" placeholder="Password">
+    <input type="text" id="type" placeholder="Type">
+    <button onclick="register()">Register</button>
+  </div>
+</div>
+</body>
+</html>

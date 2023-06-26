@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title th:text="${title}"></title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f1f1f1;
+            padding: 20px;
+        }
+
+        h1 {
+            color: #333;
+        }
+
+        table {
+            margin-top: 20px;
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        th, td {
+            padding: 8px;
+            text-align: left;
+            border-bottom: 1px solid #ddd;
+        }
+
+        th {
+            background-color: #f5f5f5;
+            color: #333;
+        }
+
+        tr:nth-child(even) {
+            background-color: #f9f9f9;
+        }
+
+        tr:hover {
+            background-color: #e9e9e9;
+        }
+
+        .edit-link {
+            color: #555;
+            cursor: pointer;
+            margin-right: 10px;
+        }
+
+        .delete-link {
+            color: red;
+            cursor: pointer;
+        }
+
+        .save-link {
+            color: green;
+            cursor: pointer;
+            margin-right: 5px;
+            display: none;
+        }
+
+    </style>
+</head>
+<body>
+<h1 th:text="${title}"></h1>
+
+<table>
+    <tr>
+<!--        <th>ID</th>-->
+        <th>Car Brand Name</th>
+        <th>Car Model</th>
+        <th>Car License Plate</th>
+        <th>Car Year Of Manufacture</th>
+        <th>Action</th>
+    </tr>
+    <tr th:each="car : ${cars}">
+<!--        <td th:text="${car.id}"></td>-->
+        <td th:text="${car.brand}"></td>
+        <td th:text="${car.model}"></td>
+        <td th:text="${car.licensePlate}"></td>
+        <td th:text="${car.yearOfManufacture}"></td>
+        <td>
+            <a class="edit-link" th:onclick="toggleEditMode(this)"><i class="fas fa-cog"></i></a>
+            <a class="delete-link" th:attr="onclick='deleteCarService(\'' + ${car.id} + '\')'"><i class="fas fa-times"></i></a>
+            <a class="save-link" th:attr="onclick='saveCarService(\'' + ${car.id} + '\')'"><i class="fas fa-check"></i></a>
+        </td>
+    </tr>
+</table>
+<script th:inline="javascript">
+    var services = /*[[${services}]]*/ [];
+    var cars = /*[[${cars}]]*/ [];
+    var serviceTypes = /*[[${serviceTypes}]]*/ [];
+
+    function toggleEditMode(editLink) {
+    var row = editLink.parentNode.parentNode;
+      var saveLink = row.getElementsByClassName('save-link')[0];
+
+        editLink.style.display = 'none';
+        saveLink.style.display = 'inline';
+    }
+
+    function saveCarService(id) {
+        var options = '';
+        for (var i = 0; i < services.length; i++) {
+            options += (i + 1) + '. ' + services[i].name + '\n';
+        }
+
+        var serviceId = prompt("Please choose service by entering its ID:\n\n" + options);
+        if(!serviceId || isNaN(serviceId) || serviceId <= 0 || serviceId > services.length) {
+            alert("Wrong service id.");
+            location.reload();
+            return;
+        }
+
+        options = '';
+        for (var i = 0; i < cars.length; i++) {
+            options += cars[i].id + '. ' + cars[i].brand + ' ' + cars[i].model + ' ' + cars[i].yearOfManufacture + ', license plate: ' + cars[i].licensePlate + '\n';
+        }
+
+        var serviceType = prompt("Please enter service type:\nUNDERCARRIAGE\nENGINE\nBRAKE_SYSTEM\nCONSUMABLES_REPLACEMENT");
+        if (!serviceType && serviceType !== "UNDERCARRIAGE" && serviceType !== "ENGINE" && serviceType !== "BRAKE_SYSTEM" && serviceType !== "CONSUMABLES_REPLACEMENT") {
+            alert("Invalid service type. Please try again.");
+            return;
+        }
+
+        var url = '/service/cars/service/' + serviceId + '/' + id + '/' + serviceType;
+        var xhr = new XMLHttpRequest();
+        xhr.open('POST', url, true);
+        xhr.onload = function() {
+            if (xhr.status === 200) {
+                alert("Sent to service!");
+                location.reload();
+            } else {
+                console.error('Error:', xhr.status);
+            }
+        };
+        xhr.onerror = function() {
+            console.error('Request failed.');
+        };
+        xhr.send();
+    }
+
+    function deleteCarService(id) {
+        if (confirm("Are you sure you want to delete this car?")) {
+            var xhr = new XMLHttpRequest();
+            xhr.open('DELETE', '/client/cars/delete/' + id, true);
+            xhr.onload = function() {
+                if (xhr.status === 200) {
+                    location.reload();
+                } else {
+                    console.error('Error:', xhr.status);
+                }
+            };
+            xhr.onerror = function() {
+                console.error('Request failed.');
+            };
+            xhr.send();
+        }
+    }
+</script>
+
+</body>
+</html>

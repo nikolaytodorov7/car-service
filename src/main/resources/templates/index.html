@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Car Management System</title>
+    <style>
+        .container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+        }
+
+        .box {
+            width: 200px;
+            height: 200px;
+            margin: 20px;
+            background-color: #f1f1f1;
+            border-radius: 10px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            font-size: 20px;
+            color: #333;
+            text-decoration: none;
+        }
+    </style>
+    <script th:inline="javascript">
+        function login() {
+            var redirectLink = "/log";
+            window.location.href = redirectLink;
+        }
+
+        function register() {
+            var redirectLink = "/reg";
+            window.location.href = redirectLink;
+        }
+    </script>
+</head>
+<body>
+<div class="container">
+    <a class="box" href="javascript:void(0)" onclick="login()">Login</a>
+    <a class="box" href="javascript:void(0)" onclick="register()">Register</a>
+</div>
+</body>
+</html>

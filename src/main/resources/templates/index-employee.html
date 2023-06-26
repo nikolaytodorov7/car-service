@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Car Management System</title>
+    <style>
+        .container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+        }
+
+        .box {
+            width: 200px;
+            height: 200px;
+            margin: 20px;
+            background-color: #f1f1f1;
+            border-radius: 10px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            font-size: 20px;
+            color: #333;
+            text-decoration: none;
+        }
+    </style>
+    <script th:inline="javascript">
+        var services = /*[[${services}]]*/ [];
+
+        function showServiceOptionsCars() {
+            var options = '';
+            for (var i = 0; i < services.length; i++) {
+                options += (i + 1) + '. ' + services[i].name + '\n';
+            }
+            var serviceId = prompt("Please select a service by entering its ID:\n\n" + options);
+            if (serviceId && serviceId > 0 && serviceId <= services.length) {
+                var redirectLink = "/service/cars/all/" + services[serviceId - 1].id;
+                window.location.href = redirectLink;
+            } else {
+                alert("Invalid service choice. Please try again.");
+            }
+        }
+
+        function showServiceOptionsRepair() {
+            var options = '';
+            for (var i = 0; i < services.length; i++) {
+                options += (i + 1) + '. ' + services[i].name + '\n';
+            }
+            var serviceId = prompt("Please select a service by entering its ID:\n\n" + options);
+            if (serviceId && serviceId > 0 && serviceId <= services.length) {
+                var redirectLink = "/service/cars/all/repair/" + services[serviceId - 1].id;
+                window.location.href = redirectLink;
+            } else {
+                alert("Invalid service choice. Please try again.");
+            }
+        }
+
+        function showServiceOptionsStatistics() {
+            var serviceOptions = '';
+            for (var i = 0; i < services.length; i++) {
+                serviceOptions += (i + 1) + '. ' + services[i].name + '\n';
+            }
+
+            var serviceId = prompt("Please select a service by entering its ID:\n\n" + serviceOptions);
+            if (serviceId && serviceId > 0 && serviceId <= services.length) {
+                var sortOptions = "1. Data by car brand\n2. Data by service type\n3.Data by car year";
+                var sortBy = prompt("Please select the sort data by entering its ID:\n\n" + sortOptions);
+                if (sortBy === "1") {
+                    var carBrand = prompt("Please enter car brand:");
+                    var redirectLink = "/service/cars/all/brand/" + services[serviceId - 1].id + "/" + carBrand;
+                    window.location.href = redirectLink;
+                } else if (sortBy === "2") {
+                    var serviceType = prompt("Please enter service type:\nUNDERCARRIAGE\nENGINE\nBRAKE_SYSTEM\nCONSUMABLES_REPLACEMENT");
+                    if (!serviceType && serviceType !== "UNDERCARRIAGE" && serviceType !== "ENGINE" && serviceType !== "BRAKE_SYSTEM" && serviceType !== "CONSUMABLES_REPLACEMENT") {
+                         alert("Invalid service type. Please try again.");
+                         return;
+                    }
+
+                    var redirectLink = "/service/cars/all/type/" + services[serviceId - 1].id + "/" + serviceType;
+                    window.location.href = redirectLink;
+                } else if (sortBy === "3") {
+                    var year = prompt("Please enter car manufacture year:");
+                    if(!year || isNaN(year) || year <= 0) {
+                         alert("Year must be positive number.");
+                         return;
+                    }
+
+                    var redirectLink = "/service/cars/all/year/" + services[serviceId - 1].id + "/" + year;
+                    window.location.href = redirectLink;
+                } else {
+                    alert("Invalid sort type. Please try again.");
+                }
+            } else {
+                alert("Invalid service choice. Please try again.");
+            }
+        }
+    </script>
+</head>
+<body>
+<div class="container">
+    <a class="box" href="javascript:void(0)" onclick="showServiceOptionsCars()">Cars in service</a>
+    <a class="box" href="javascript:void(0)" onclick="showServiceOptionsRepair()">Cars for repair in service</a>
+    <a class="box" href="javascript:void(0)" onclick="showServiceOptionsStatistics()">Statistics</a>
+</div>
+</body>
+</html>

@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Car Management System</title>
+    <style>
+        .container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+        }
+
+        .box {
+            width: 200px;
+            height: 200px;
+            margin: 20px;
+            background-color: #f1f1f1;
+            border-radius: 10px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            font-size: 20px;
+            color: #333;
+            text-decoration: none;
+        }
+
+        .form-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .form-container input {
+            margin-bottom: 10px;
+        }
+
+    </style>
+    <script th:inline="javascript">
+        var services = /*[[${services}]]*/ [];
+        var cars = /*[[${cars}]]*/ [];
+
+        function showCars() {
+            var url = window.location.href;
+            var clientId = url.slice(url.lastIndexOf('/') + 1);
+            var redirectLink = "/client/cars/" + clientId;
+            window.location.href = redirectLink;
+        }
+
+        function buyCar() {
+    var formContainer = document.createElement("div");
+    formContainer.className = "form-container";
+
+    var modelInput = createInputField("Car Model", "model");
+    var brandInput = createInputField("Car Brand", "brand");
+    var licensePlateInput = createInputField("License Plate", "licensePlate");
+    var yearOfManufactureInput = createInputField("Year of Manufacture", "yearOfManufacture");
+    var carInput = createInputField("Car", "car");
+
+    var submitButton = document.createElement("button");
+    submitButton.innerText = "Submit";
+    submitButton.onclick = function() {
+        var car = {
+            model: modelInput.value,
+            brand: brandInput.value,
+            licensePlate: licensePlateInput.value,
+            yearOfManufacture: yearOfManufactureInput.value,
+        };
+        sendCarData(car);
+    };
+
+    formContainer.appendChild(modelInput);
+    formContainer.appendChild(brandInput);
+    formContainer.appendChild(licensePlateInput);
+    formContainer.appendChild(yearOfManufactureInput);
+    formContainer.appendChild(submitButton);
+    document.body.appendChild(formContainer);
+}
+
+function sendCarData(car) {
+    var url = window.location.href;
+    var clientId = url.slice(url.lastIndexOf('/') + 1);
+    fetch("/client/buy/car/" + clientId, {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json"
+        },
+        body: JSON.stringify(car)
+    })
+    .then(response => response.json())
+    .then(data => {
+        alert("Bought car!");
+        location.reload();
+    })
+    .catch(error => {
+        console.error("Error:", error);
+        location.reload();
+    });
+}
+
+        function createInputField(placeholder, name) {
+            var input = document.createElement("input");
+            input.type = "text";
+            input.placeholder = placeholder;
+            input.name = name;
+            return input;
+        }
+
+    </script>
+</head>
+<body>
+<div class="container">
+    <a class="box" href="javascript:void(0)" onclick="showCars()">My cars</a>
+    <a class="box" href="javascript:void(0)" onclick="buyCar()">Buy car</a>
+</div>
+</body>
+</html>
